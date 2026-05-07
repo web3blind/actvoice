@@ -1,0 +1,10 @@
+data/
+__pycache__/
+*.py[cod]
+.env
+.venv/
+venv/
+build/
+*.wav
+*.mp3
+.pytest_cache/
