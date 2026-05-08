@@ -31,6 +31,9 @@ def test_homepage_contains_accessible_agent_instructions():
     assert "actvoice.xyz/mcp" in html
     assert "data-language-panel=\"ru\"" in html
     assert "data-set-language=\"ru\"" in html
+    assert "<main id=\"start\">" in html
+    assert ".skip-link:focus" in html
+    assert "radial-gradient" in html
     assert "navigator.language" in html
     assert "localStorage.getItem('actvoice-language')" in html
     assert "Студия аудиоспектаклей для людей и AI-агентов" in html

@@ -35,29 +35,33 @@ HOME_HTML = """<!doctype html>
   <title>ActVoice — accessible audio drama studio</title>
   <style>
     :root { color-scheme: dark; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    body { margin: 0; background: #050507; color: #f4f4f5; line-height: 1.6; }
-    main { max-width: 58rem; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+    body { margin: 0; background: radial-gradient(circle at top, #101018 0, #050507 34rem); color: #f4f4f5; line-height: 1.6; }
+    main { max-width: 58rem; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
     a { color: #00d992; }
     code, pre { background: #151518; color: #f8fafc; border-radius: .5rem; }
     code { padding: .1rem .3rem; }
-    pre { padding: 1rem; overflow-x: auto; }
+    pre { padding: 1rem; overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
+    header { margin: 2rem 0 1.5rem; }
+    header h1 { margin-bottom: .25rem; }
     .copy-snippet { margin: 1rem 0; }
     .copy-snippet-header { display: flex; gap: .75rem; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: .35rem; }
     .copy-snippet-title { font-weight: 700; }
     .copy-button, .language-button { border: 1px solid #00d992; border-radius: .5rem; background: #04100c; color: #f4f4f5; cursor: pointer; padding: .4rem .7rem; }
-    .copy-button:focus-visible, .language-button:focus-visible { outline: 3px solid #d4a843; outline-offset: 2px; }
+    .copy-button:hover, .language-button:hover { background: #082019; }
+    .copy-button:focus-visible, .language-button:focus-visible, .skip-link:focus-visible { outline: 3px solid #d4a843; outline-offset: 2px; }
     .language-button[aria-pressed="true"] { background: #00d992; color: #04100c; }
     .copy-status { color: #d4a843; min-height: 1.5em; }
-    .tagline { font-size: 1.2rem; color: #d4a843; }
-    .card { border: 1px solid #2f2f36; border-radius: 1rem; padding: 1rem; margin: 1rem 0; background: #0d0d11; }
-    .skip-link { position: absolute; left: .5rem; top: .5rem; background: #00d992; color: #04100c; padding: .5rem; }
-    .language-switcher { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; margin: 1rem 0; }
+    .tagline { font-size: 1.2rem; color: #d4a843; margin-top: 0; }
+    .card { border: 1px solid #2f2f36; border-radius: 1rem; padding: 1.2rem; margin: 1rem 0; background: rgba(13, 13, 17, .94); box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, .18); }
+    .skip-link { position: absolute; left: .75rem; top: .75rem; z-index: 2; background: #00d992; color: #04100c; padding: .5rem; transform: translateY(-150%); }
+    .skip-link:focus { transform: translateY(0); }
+    .language-switcher { display: flex; gap: .5rem; align-items: center; justify-content: flex-end; flex-wrap: wrap; margin: 0 0 1rem; }
     [data-language-panel][hidden] { display: none; }
   </style>
 </head>
 <body>
 <a class="skip-link" href="#start">Skip to instructions / Перейти к инструкции</a>
-<main>
+<main id="start">
   <nav class="language-switcher" aria-label="Language / Язык">
     <span id="language-switcher-label">Language / Язык:</span>
     <button class="language-button" type="button" data-set-language="en" aria-pressed="true">English</button>
@@ -77,7 +81,7 @@ HOME_HTML = """<!doctype html>
       <p>Everything important is available through REST API and MCP tools, so a blind creator can work through a screen reader, terminal, or AI agent.</p>
     </section>
 
-    <section id="start" class="card" aria-labelledby="quickstart-en">
+    <section class="card" aria-labelledby="quickstart-en">
       <h2 id="quickstart-en">Quick start for agents</h2>
       <ol>
         <li><strong>Register an agent.</strong> Call <code>POST /api/agents/register</code> and receive an ActVoice API key.</li>
