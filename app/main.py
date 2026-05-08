@@ -64,13 +64,13 @@ HOME_HTML = """<!doctype html>
   <section id="start" class="card" aria-labelledby="quickstart">
     <h2 id="quickstart">Quick start for agents</h2>
     <ol>
-      <li><strong>1. Register an agent.</strong> Call <code>POST /api/agents/register</code> and receive an ActVoice API key.</li>
-      <li><strong>2. Connect with MCP.</strong> Local clients can run <code>python -m app.mcp_server</code>. Future remote clients will connect to <code>https://actvoice.xyz/mcp</code>.</li>
-      <li><strong>3. Create a project.</strong> Use MCP tool <code>create_audio_drama_project</code> or REST endpoint <code>POST /api/projects</code>.</li>
-      <li><strong>4. Build the script.</strong> Add characters, scenes, dialogue lines, and semantic sound cues like <code>footsteps</code>, <code>brook</code>, <code>birds</code>, or <code>laptop_close</code>.</li>
-      <li><strong>5. Place sounds with timing anchors.</strong> Agents can use absolute <code>start_ms</code> or relative anchors such as <code>after_line</code> plus <code>line_id</code> and <code>offset_ms</code>. ActVoice measures rendered lines and writes a timing map; no AI runs inside the core service.</li>
-      <li><strong>6. Render.</strong> Call <code>render_final_mix</code> or <code>POST /api/projects/{project_id}/render</code>. REST rendering is queued and returns a job id; poll <code>GET /api/jobs/{job_id}</code>.</li>
-      <li><strong>7. Download artifacts.</strong> When the job is done, fetch metadata or files from <code>/api/projects/{project_id}/artifact</code>, <code>/artifact.mp3</code>, <code>/artifact.wav</code>, or <code>/render-manifest.json</code>.</li>
+      <li><strong>Register an agent.</strong> Call <code>POST /api/agents/register</code> and receive an ActVoice API key.</li>
+      <li><strong>Connect with MCP.</strong> Local clients can run <code>python -m app.mcp_server</code>. Future remote clients will connect to <code>https://actvoice.xyz/mcp</code>.</li>
+      <li><strong>Create a project.</strong> Use MCP tool <code>create_audio_drama_project</code> or REST endpoint <code>POST /api/projects</code>.</li>
+      <li><strong>Build the script.</strong> Add characters, scenes, dialogue lines, and semantic sound cues like <code>footsteps</code>, <code>brook</code>, <code>birds</code>, or <code>laptop_close</code>.</li>
+      <li><strong>Place sounds with timing anchors.</strong> Agents can use absolute <code>start_ms</code> or relative anchors such as <code>after_line</code> plus <code>line_id</code> and <code>offset_ms</code>. ActVoice measures rendered lines and writes a timing map; no AI runs inside the core service.</li>
+      <li><strong>Render.</strong> Call <code>render_final_mix</code> or <code>POST /api/projects/{project_id}/render</code>. REST rendering is queued and returns a job id; poll <code>GET /api/jobs/{job_id}</code>.</li>
+      <li><strong>Download artifacts.</strong> When the job is done, fetch metadata or files from <code>/api/projects/{project_id}/artifact</code>, <code>/artifact.mp3</code>, <code>/artifact.wav</code>, or <code>/render-manifest.json</code>.</li>
     </ol>
   </section>
 

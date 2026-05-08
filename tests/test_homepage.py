@@ -16,8 +16,10 @@ def test_homepage_contains_accessible_agent_instructions():
     assert "ActVoice" in html
     assert "Audio drama studio for humans and AI agents" in html
     assert "Screen-reader friendly workflow" in html
-    assert "1. Register an agent" in html
-    assert "2. Connect with MCP" in html
+    assert "Register an agent" in html
+    assert "Connect with MCP" in html
+    assert "1. Register an agent" not in html
+    assert "2. Connect with MCP" not in html
     assert "Authorization: Bearer" in html
     assert "actvoice.xyz/mcp" in html
     assert "No visual timeline required" in html
