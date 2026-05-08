@@ -44,127 +44,275 @@ HOME_HTML = """<!doctype html>
     .copy-snippet { margin: 1rem 0; }
     .copy-snippet-header { display: flex; gap: .75rem; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: .35rem; }
     .copy-snippet-title { font-weight: 700; }
-    .copy-button { border: 1px solid #00d992; border-radius: .5rem; background: #04100c; color: #f4f4f5; cursor: pointer; padding: .4rem .7rem; }
-    .copy-button:focus-visible { outline: 3px solid #d4a843; outline-offset: 2px; }
+    .copy-button, .language-button { border: 1px solid #00d992; border-radius: .5rem; background: #04100c; color: #f4f4f5; cursor: pointer; padding: .4rem .7rem; }
+    .copy-button:focus-visible, .language-button:focus-visible { outline: 3px solid #d4a843; outline-offset: 2px; }
+    .language-button[aria-pressed="true"] { background: #00d992; color: #04100c; }
     .copy-status { color: #d4a843; min-height: 1.5em; }
     .tagline { font-size: 1.2rem; color: #d4a843; }
     .card { border: 1px solid #2f2f36; border-radius: 1rem; padding: 1rem; margin: 1rem 0; background: #0d0d11; }
     .skip-link { position: absolute; left: .5rem; top: .5rem; background: #00d992; color: #04100c; padding: .5rem; }
+    .language-switcher { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; margin: 1rem 0; }
+    [data-language-panel][hidden] { display: none; }
   </style>
 </head>
 <body>
-<a class="skip-link" href="#start">Skip to instructions</a>
+<a class="skip-link" href="#start">Skip to instructions / Перейти к инструкции</a>
 <main>
-  <header>
-    <h1>ActVoice</h1>
-    <p class="tagline">Audio drama studio for humans and AI agents.</p>
-    <p>ActVoice turns a text project manifest into a rendered audio drama: characters, voices, scenes, dialogue, ambience, sound cues, and a final MP3 artifact.</p>
-  </header>
+  <nav class="language-switcher" aria-label="Language / Язык">
+    <span id="language-switcher-label">Language / Язык:</span>
+    <button class="language-button" type="button" data-set-language="en" aria-pressed="true">English</button>
+    <button class="language-button" type="button" data-set-language="ru" aria-pressed="false">Русский</button>
+  </nav>
 
-  <section class="card" aria-labelledby="accessibility">
-    <h2 id="accessibility">Screen-reader friendly workflow</h2>
-    <p><strong>No visual timeline required.</strong> The core workflow is text-first: create a project, add characters, add scenes, add dialogue lines, add semantic sound cues, then render.</p>
-    <p>Everything important is available through REST API and MCP tools, so a blind creator can work through a screen reader, terminal, or AI agent.</p>
-  </section>
+  <div data-language-panel="en">
+    <header>
+      <h1>ActVoice</h1>
+      <p class="tagline">Audio drama studio for humans and AI agents.</p>
+      <p>ActVoice turns a text project manifest into a rendered audio drama: characters, voices, scenes, dialogue, ambience, sound cues, and a final MP3 artifact.</p>
+    </header>
 
-  <section id="start" class="card" aria-labelledby="quickstart">
-    <h2 id="quickstart">Quick start for agents</h2>
-    <ol>
-      <li><strong>Register an agent.</strong> Call <code>POST /api/agents/register</code> and receive an ActVoice API key.</li>
-      <li><strong>Connect with MCP.</strong> Local clients can run <code>python -m app.mcp_server</code>. Future remote clients will connect to <code>https://actvoice.xyz/mcp</code>.</li>
-      <li><strong>Create a project.</strong> Use MCP tool <code>create_audio_drama_project</code> or REST endpoint <code>POST /api/projects</code>.</li>
-      <li><strong>Build the script.</strong> Add characters, scenes, dialogue lines, and semantic sound cues like <code>footsteps</code>, <code>brook</code>, <code>birds</code>, or <code>laptop_close</code>.</li>
-      <li><strong>Place sounds with timing anchors.</strong> Agents can use absolute <code>start_ms</code> or relative anchors such as <code>after_line</code> plus <code>line_id</code> and <code>offset_ms</code>. ActVoice measures rendered lines and writes a timing map; no AI runs inside the core service.</li>
-      <li><strong>Render.</strong> Call <code>render_final_mix</code> or <code>POST /api/projects/{project_id}/render</code>. REST rendering is queued and returns a job id; poll <code>GET /api/jobs/{job_id}</code>.</li>
-      <li><strong>Download artifacts.</strong> When the job is done, fetch metadata or files from <code>/api/projects/{project_id}/artifact</code>, <code>/artifact.mp3</code>, <code>/artifact.wav</code>, or <code>/render-manifest.json</code>.</li>
-    </ol>
-  </section>
+    <section class="card" aria-labelledby="accessibility-en">
+      <h2 id="accessibility-en">Screen-reader friendly workflow</h2>
+      <p><strong>No visual timeline required.</strong> The core workflow is text-first: create a project, add characters, add scenes, add dialogue lines, add semantic sound cues, then render.</p>
+      <p>Everything important is available through REST API and MCP tools, so a blind creator can work through a screen reader, terminal, or AI agent.</p>
+    </section>
 
-  <section class="card" aria-labelledby="copy-ready-examples">
-    <h2 id="copy-ready-examples">Copy-ready examples</h2>
-    <p>Each example is a real command or request shape. Replace placeholders such as <code>[API_KEY]</code> and <code>[PROJECT_ID]</code> before running.</p>
+    <section id="start" class="card" aria-labelledby="quickstart-en">
+      <h2 id="quickstart-en">Quick start for agents</h2>
+      <ol>
+        <li><strong>Register an agent.</strong> Call <code>POST /api/agents/register</code> and receive an ActVoice API key.</li>
+        <li><strong>Connect with MCP.</strong> Local clients can run <code>python -m app.mcp_server</code>. Future remote clients will connect to <code>https://actvoice.xyz/mcp</code>.</li>
+        <li><strong>Create a project.</strong> Use MCP tool <code>create_audio_drama_project</code> or REST endpoint <code>POST /api/projects</code>.</li>
+        <li><strong>Build the script.</strong> Add characters, scenes, dialogue lines, and semantic sound cues like <code>footsteps</code>, <code>brook</code>, <code>birds</code>, or <code>laptop_close</code>.</li>
+        <li><strong>Place sounds with timing anchors.</strong> Agents can use absolute <code>start_ms</code> or relative anchors such as <code>after_line</code> plus <code>line_id</code> and <code>offset_ms</code>. ActVoice measures rendered lines and writes a timing map; no AI runs inside the core service.</li>
+        <li><strong>Render.</strong> Call <code>render_final_mix</code> or <code>POST /api/projects/{project_id}/render</code>. REST rendering is queued and returns a job id; poll <code>GET /api/jobs/{job_id}</code>.</li>
+        <li><strong>Download artifacts.</strong> When the job is done, fetch metadata or files from <code>/api/projects/{project_id}/artifact</code>, <code>/artifact.mp3</code>, <code>/artifact.wav</code>, or <code>/render-manifest.json</code>.</li>
+      </ol>
+    </section>
 
-    <div class="copy-snippet">
-      <div class="copy-snippet-header">
-        <span class="copy-snippet-title">Register an agent</span>
-        <button class="copy-button" type="button" data-copy-target="snippet-register" aria-describedby="copy-status">Copy</button>
-      </div>
-      <pre><code id="snippet-register">curl -X POST https://actvoice.xyz/api/agents/register \
+    <section class="card" aria-labelledby="copy-ready-examples-en">
+      <h2 id="copy-ready-examples-en">Copy-ready examples</h2>
+      <p>Each example is a real command or request shape. Replace placeholders such as <code>[API_KEY]</code>, <code>[PROJECT_ID]</code>, and <code>[JOB_ID]</code> before running.</p>
+
+      <div class="copy-snippet">
+        <div class="copy-snippet-header">
+          <span class="copy-snippet-title">Register an agent</span>
+          <button class="copy-button" type="button" data-copy-target="snippet-register-en" aria-describedby="copy-status-en">Copy</button>
+        </div>
+        <pre><code id="snippet-register-en">curl -X POST https://actvoice.xyz/api/agents/register \
   -H 'Content-Type: application/json' \
   -d '{"agent_name":"Hermes","purpose":"audio drama render"}'</code></pre>
-    </div>
-
-    <div class="copy-snippet">
-      <div class="copy-snippet-header">
-        <span class="copy-snippet-title">Create a project</span>
-        <button class="copy-button" type="button" data-copy-target="snippet-create-project" aria-describedby="copy-status">Copy</button>
       </div>
-      <pre><code id="snippet-create-project">curl -X POST https://actvoice.xyz/api/projects \
+
+      <div class="copy-snippet">
+        <div class="copy-snippet-header">
+          <span class="copy-snippet-title">Create a project</span>
+          <button class="copy-button" type="button" data-copy-target="snippet-create-project-en" aria-describedby="copy-status-en">Copy</button>
+        </div>
+        <pre><code id="snippet-create-project-en">curl -X POST https://actvoice.xyz/api/projects \
   -H 'Authorization: Bearer [API_KEY]' \
   -H 'Content-Type: application/json' \
   -d '{"title":"My audio drama","language":"ru"}'</code></pre>
-    </div>
-
-    <div class="copy-snippet">
-      <div class="copy-snippet-header">
-        <span class="copy-snippet-title">Render and download</span>
-        <button class="copy-button" type="button" data-copy-target="snippet-render-download" aria-describedby="copy-status">Copy</button>
       </div>
-      <pre><code id="snippet-render-download">curl -X POST https://actvoice.xyz/api/projects/[PROJECT_ID]/render \
+
+      <div class="copy-snippet">
+        <div class="copy-snippet-header">
+          <span class="copy-snippet-title">Render and download</span>
+          <button class="copy-button" type="button" data-copy-target="snippet-render-download-en" aria-describedby="copy-status-en">Copy</button>
+        </div>
+        <pre><code id="snippet-render-download-en">curl -X POST https://actvoice.xyz/api/projects/[PROJECT_ID]/render \
   -H 'Authorization: Bearer [API_KEY]'
 
 curl https://actvoice.xyz/api/jobs/[JOB_ID]
 curl -L -o final_mix.mp3 https://actvoice.xyz/api/projects/[PROJECT_ID]/artifact.mp3</code></pre>
-    </div>
-
-    <div class="copy-snippet">
-      <div class="copy-snippet-header">
-        <span class="copy-snippet-title">Local MCP server</span>
-        <button class="copy-button" type="button" data-copy-target="snippet-mcp" aria-describedby="copy-status">Copy</button>
       </div>
-      <pre><code id="snippet-mcp">ACTVOICE_API_KEY='[API_KEY]' python -m app.mcp_server</code></pre>
-    </div>
-    <p id="copy-status" class="copy-status" role="status" aria-live="polite"></p>
-  </section>
 
-  <section class="card" aria-labelledby="auth">
-    <h2 id="auth">Authentication</h2>
-    <p>Write and render actions require a bearer key:</p>
-    <pre><code>Authorization: Bearer [REDACTED]</code></pre>
-    <p>For local stdio MCP, the same key can be provided as <code>ACTVOICE_API_KEY</code>. For remote HTTP MCP, the same idea becomes header-based transport authentication.</p>
-  </section>
+      <div class="copy-snippet">
+        <div class="copy-snippet-header">
+          <span class="copy-snippet-title">Local MCP server</span>
+          <button class="copy-button" type="button" data-copy-target="snippet-mcp-en" aria-describedby="copy-status-en">Copy</button>
+        </div>
+        <pre><code id="snippet-mcp-en">ACTVOICE_API_KEY='[API_KEY]' python -m app.mcp_server</code></pre>
+      </div>
+      <p id="copy-status-en" class="copy-status" role="status" aria-live="polite"></p>
+    </section>
 
-  <section class="card" aria-labelledby="tts">
-    <h2 id="tts">Voice and rendering modes</h2>
-    <ul>
-      <li><code>edge</code>: current free/default neural voice mode.</li>
-      <li><code>rhvoice</code>: local/offline fallback if Edge is unavailable or explicitly requested.</li>
-      <li><code>openai_byo_key</code>: planned user-provided paid provider mode.</li>
-    </ul>
-  </section>
+    <section class="card" aria-labelledby="auth-en">
+      <h2 id="auth-en">Authentication</h2>
+      <p>Write and render actions require a bearer key:</p>
+      <pre><code>Authorization: Bearer [API_KEY]</code></pre>
+      <p>For local stdio MCP, the same key can be provided as <code>ACTVOICE_API_KEY</code>. For remote HTTP MCP, the same idea becomes header-based transport authentication.</p>
+    </section>
 
-  <section class="card" aria-labelledby="project-links">
-    <h2 id="project-links">Project links</h2>
-    <ul>
-      <li><a href="https://x.com/denis_skripnik" rel="me noopener noreferrer">Author on X</a></li>
-      <li><a href="https://github.com/web3blind/actvoice" rel="noopener noreferrer">Source on GitHub</a></li>
-    </ul>
-  </section>
+    <section class="card" aria-labelledby="tts-en">
+      <h2 id="tts-en">Voice and rendering modes</h2>
+      <ul>
+        <li><code>edge</code>: current free/default neural voice mode.</li>
+        <li><code>rhvoice</code>: local/offline fallback if Edge is unavailable or explicitly requested.</li>
+        <li><code>openai_byo_key</code>: planned user-provided paid provider mode.</li>
+      </ul>
+    </section>
 
-  <section class="card" aria-labelledby="status">
-    <h2 id="status">Service endpoints</h2>
-    <ul>
-      <li>Health: <a href="/health"><code>/health</code></a></li>
-      <li>Voices: <a href="/api/voices"><code>/api/voices</code></a></li>
-      <li>OpenAPI schema: <a href="/docs"><code>/docs</code></a></li>
-    </ul>
-  </section>
+    <section class="card" aria-labelledby="project-links-en">
+      <h2 id="project-links-en">Project links</h2>
+      <ul>
+        <li><a href="https://x.com/denis_skripnik" rel="me noopener noreferrer">Author on X</a></li>
+        <li><a href="https://github.com/web3blind/actvoice" rel="noopener noreferrer">Source on GitHub</a></li>
+      </ul>
+    </section>
+
+    <section class="card" aria-labelledby="status-en">
+      <h2 id="status-en">Service endpoints</h2>
+      <ul>
+        <li>Health: <a href="/health"><code>/health</code></a></li>
+        <li>Voices: <a href="/api/voices"><code>/api/voices</code></a></li>
+        <li>OpenAPI schema: <a href="/docs"><code>/docs</code></a></li>
+      </ul>
+    </section>
+  </div>
+
+  <div data-language-panel="ru" hidden>
+    <header>
+      <h1>ActVoice</h1>
+      <p class="tagline">Студия аудиоспектаклей для людей и AI-агентов.</p>
+      <p>ActVoice превращает текстовый манифест проекта в готовый аудиоспектакль: персонажи, голоса, сцены, реплики, атмосфера, звуковые события и финальный MP3-файл.</p>
+    </header>
+
+    <section class="card" aria-labelledby="accessibility-ru">
+      <h2 id="accessibility-ru">Удобный workflow для скринридера</h2>
+      <p><strong>Визуальная таймлиния не нужна.</strong> Основной процесс текстовый: создать проект, добавить персонажей, сцены, реплики, смысловые звуковые события и запустить рендер.</p>
+      <p>Всё важное доступно через REST API и MCP tools, поэтому незрячий автор может работать через скринридер, терминал или AI-агента.</p>
+    </section>
+
+    <section class="card" aria-labelledby="quickstart-ru">
+      <h2 id="quickstart-ru">Быстрый старт для агентов</h2>
+      <ol>
+        <li><strong>Зарегистрируйте агента.</strong> Вызовите <code>POST /api/agents/register</code> и получите API-ключ ActVoice.</li>
+        <li><strong>Подключитесь через MCP.</strong> Локально можно запустить <code>python -m app.mcp_server</code>. В будущем remote-клиенты смогут подключаться к <code>https://actvoice.xyz/mcp</code>.</li>
+        <li><strong>Создайте проект.</strong> Используйте MCP tool <code>create_audio_drama_project</code> или REST endpoint <code>POST /api/projects</code>.</li>
+        <li><strong>Соберите сценарий.</strong> Добавьте персонажей, сцены, реплики и смысловые звуковые события: <code>footsteps</code>, <code>brook</code>, <code>birds</code>, <code>laptop_close</code>.</li>
+        <li><strong>Расставьте звуки по времени.</strong> Агенты могут использовать точный <code>start_ms</code> или относительные anchors: <code>after_line</code> плюс <code>line_id</code> и <code>offset_ms</code>. ActVoice измеряет длительность озвученных реплик и пишет timing map; внутри core-сервиса AI не запускается.</li>
+        <li><strong>Запустите рендер.</strong> Вызовите <code>render_final_mix</code> или <code>POST /api/projects/{project_id}/render</code>. REST-рендер ставится в очередь и возвращает job id; статус проверяется через <code>GET /api/jobs/{job_id}</code>.</li>
+        <li><strong>Скачайте артефакты.</strong> Когда job завершён, заберите metadata или файлы из <code>/api/projects/{project_id}/artifact</code>, <code>/artifact.mp3</code>, <code>/artifact.wav</code> или <code>/render-manifest.json</code>.</li>
+      </ol>
+    </section>
+
+    <section class="card" aria-labelledby="copy-ready-examples-ru">
+      <h2 id="copy-ready-examples-ru">Готовые примеры для копирования</h2>
+      <p>Каждый пример — настоящая команда или форма запроса. Перед запуском замените placeholders <code>[API_KEY]</code>, <code>[PROJECT_ID]</code> и <code>[JOB_ID]</code>.</p>
+
+      <div class="copy-snippet">
+        <div class="copy-snippet-header">
+          <span class="copy-snippet-title">Зарегистрировать агента</span>
+          <button class="copy-button" type="button" data-copy-target="snippet-register-ru" aria-describedby="copy-status-ru">Копировать</button>
+        </div>
+        <pre><code id="snippet-register-ru">curl -X POST https://actvoice.xyz/api/agents/register \
+  -H 'Content-Type: application/json' \
+  -d '{"agent_name":"Hermes","purpose":"audio drama render"}'</code></pre>
+      </div>
+
+      <div class="copy-snippet">
+        <div class="copy-snippet-header">
+          <span class="copy-snippet-title">Создать проект</span>
+          <button class="copy-button" type="button" data-copy-target="snippet-create-project-ru" aria-describedby="copy-status-ru">Копировать</button>
+        </div>
+        <pre><code id="snippet-create-project-ru">curl -X POST https://actvoice.xyz/api/projects \
+  -H 'Authorization: Bearer [API_KEY]' \
+  -H 'Content-Type: application/json' \
+  -d '{"title":"Мой аудиоспектакль","language":"ru"}'</code></pre>
+      </div>
+
+      <div class="copy-snippet">
+        <div class="copy-snippet-header">
+          <span class="copy-snippet-title">Запустить рендер и скачать MP3</span>
+          <button class="copy-button" type="button" data-copy-target="snippet-render-download-ru" aria-describedby="copy-status-ru">Копировать</button>
+        </div>
+        <pre><code id="snippet-render-download-ru">curl -X POST https://actvoice.xyz/api/projects/[PROJECT_ID]/render \
+  -H 'Authorization: Bearer [API_KEY]'
+
+curl https://actvoice.xyz/api/jobs/[JOB_ID]
+curl -L -o final_mix.mp3 https://actvoice.xyz/api/projects/[PROJECT_ID]/artifact.mp3</code></pre>
+      </div>
+
+      <div class="copy-snippet">
+        <div class="copy-snippet-header">
+          <span class="copy-snippet-title">Локальный MCP server</span>
+          <button class="copy-button" type="button" data-copy-target="snippet-mcp-ru" aria-describedby="copy-status-ru">Копировать</button>
+        </div>
+        <pre><code id="snippet-mcp-ru">ACTVOICE_API_KEY='[API_KEY]' python -m app.mcp_server</code></pre>
+      </div>
+      <p id="copy-status-ru" class="copy-status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="card" aria-labelledby="auth-ru">
+      <h2 id="auth-ru">Аутентификация</h2>
+      <p>Действия записи и рендера требуют bearer key:</p>
+      <pre><code>Authorization: Bearer [API_KEY]</code></pre>
+      <p>Для локального stdio MCP тот же ключ можно передать как <code>ACTVOICE_API_KEY</code>. Для remote HTTP MCP используется та же идея, но через header-based transport authentication.</p>
+    </section>
+
+    <section class="card" aria-labelledby="tts-ru">
+      <h2 id="tts-ru">Голоса и режимы рендера</h2>
+      <ul>
+        <li><code>edge</code>: текущий бесплатный/default режим нейронных голосов.</li>
+        <li><code>rhvoice</code>: локальный/offline fallback, если Edge недоступен или выбран явно.</li>
+        <li><code>openai_byo_key</code>: планируемый режим платного провайдера с ключом пользователя.</li>
+      </ul>
+    </section>
+
+    <section class="card" aria-labelledby="project-links-ru">
+      <h2 id="project-links-ru">Ссылки проекта</h2>
+      <ul>
+        <li><a href="https://x.com/denis_skripnik" rel="me noopener noreferrer">Автор в X</a></li>
+        <li><a href="https://github.com/web3blind/actvoice" rel="noopener noreferrer">Исходный код на GitHub</a></li>
+      </ul>
+    </section>
+
+    <section class="card" aria-labelledby="status-ru">
+      <h2 id="status-ru">Service endpoints</h2>
+      <ul>
+        <li>Health: <a href="/health"><code>/health</code></a></li>
+        <li>Voices: <a href="/api/voices"><code>/api/voices</code></a></li>
+        <li>OpenAPI schema: <a href="/docs"><code>/docs</code></a></li>
+      </ul>
+    </section>
+  </div>
 </main>
 <script>
+  const messages = {
+    en: {
+      copied: 'Copied to clipboard.',
+      failed: 'Copy failed. Select the code block and copy it manually.'
+    },
+    ru: {
+      copied: 'Скопировано в буфер обмена.',
+      failed: 'Не удалось скопировать. Выделите блок кода и скопируйте вручную.'
+    }
+  };
+
+  function preferredLanguage() {
+    const saved = window.localStorage.getItem('actvoice-language');
+    if (saved === 'ru' || saved === 'en') return saved;
+    const browserLanguage = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+    return browserLanguage.startsWith('ru') ? 'ru' : 'en';
+  }
+
+  function applyLanguage(language) {
+    const selected = language === 'ru' ? 'ru' : 'en';
+    document.documentElement.lang = selected;
+    document.querySelectorAll('[data-language-panel]').forEach((panel) => {
+      panel.hidden = panel.dataset.languagePanel !== selected;
+    });
+    document.querySelectorAll('[data-set-language]').forEach((button) => {
+      button.setAttribute('aria-pressed', button.dataset.setLanguage === selected ? 'true' : 'false');
+    });
+  }
+
   async function copySnippet(targetId, statusEl) {
     const target = document.getElementById(targetId);
-    if (!target) return;
+    if (!target || !statusEl) return;
     const text = target.innerText;
+    const language = document.documentElement.lang === 'ru' ? 'ru' : 'en';
     try {
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(text);
@@ -179,18 +327,28 @@ curl -L -o final_mix.mp3 https://actvoice.xyz/api/projects/[PROJECT_ID]/artifact
         document.execCommand('copy');
         document.body.removeChild(textarea);
       }
-      statusEl.textContent = 'Copied to clipboard.';
+      statusEl.textContent = messages[language].copied;
     } catch (error) {
-      statusEl.textContent = 'Copy failed. Select the code block and copy it manually.';
+      statusEl.textContent = messages[language].failed;
     }
   }
 
+  document.querySelectorAll('[data-set-language]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const language = button.dataset.setLanguage;
+      window.localStorage.setItem('actvoice-language', language);
+      applyLanguage(language);
+    });
+  });
+
   document.querySelectorAll('[data-copy-target]').forEach((button) => {
     button.addEventListener('click', () => {
-      const statusEl = document.getElementById('copy-status');
+      const statusEl = document.getElementById(button.getAttribute('aria-describedby'));
       copySnippet(button.dataset.copyTarget, statusEl);
     });
   });
+
+  applyLanguage(preferredLanguage());
 </script>
 </body>
 </html>
