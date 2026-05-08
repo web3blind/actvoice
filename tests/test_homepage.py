@@ -27,5 +27,9 @@ def test_homepage_contains_accessible_agent_instructions():
     assert "REST rendering is queued" in html
     assert "edge" in html
     assert "local/offline fallback" in html
+    assert "Author on X" in html
+    assert "https://x.com/denis_skripnik" in html
+    assert "Source on GitHub" in html
+    assert "https://github.com/web3blind/actvoice" in html
     assert "artifact.mp3" in html
     assert "render-manifest.json" in html

@@ -90,6 +90,14 @@ HOME_HTML = """<!doctype html>
     </ul>
   </section>
 
+  <section class="card" aria-labelledby="project-links">
+    <h2 id="project-links">Project links</h2>
+    <ul>
+      <li><a href="https://x.com/denis_skripnik" rel="me noopener noreferrer">Author on X</a></li>
+      <li><a href="https://github.com/web3blind/actvoice" rel="noopener noreferrer">Source on GitHub</a></li>
+    </ul>
+  </section>
+
   <section class="card" aria-labelledby="status">
     <h2 id="status">Service endpoints</h2>
     <ul>
