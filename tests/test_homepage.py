@@ -20,6 +20,11 @@ def test_homepage_contains_accessible_agent_instructions():
     assert "Connect with MCP" in html
     assert "1. Register an agent" not in html
     assert "2. Connect with MCP" not in html
+    assert "Copy-ready examples" in html
+    assert "data-copy-target=\"snippet-register\"" in html
+    assert "curl -X POST https://actvoice.xyz/api/agents/register" in html
+    assert "curl -L -o final_mix.mp3" in html
+    assert "Copied to clipboard" in html
     assert "Authorization: Bearer" in html
     assert "actvoice.xyz/mcp" in html
     assert "No visual timeline required" in html

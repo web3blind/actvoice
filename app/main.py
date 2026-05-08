@@ -41,6 +41,12 @@ HOME_HTML = """<!doctype html>
     code, pre { background: #151518; color: #f8fafc; border-radius: .5rem; }
     code { padding: .1rem .3rem; }
     pre { padding: 1rem; overflow-x: auto; }
+    .copy-snippet { margin: 1rem 0; }
+    .copy-snippet-header { display: flex; gap: .75rem; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: .35rem; }
+    .copy-snippet-title { font-weight: 700; }
+    .copy-button { border: 1px solid #00d992; border-radius: .5rem; background: #04100c; color: #f4f4f5; cursor: pointer; padding: .4rem .7rem; }
+    .copy-button:focus-visible { outline: 3px solid #d4a843; outline-offset: 2px; }
+    .copy-status { color: #d4a843; min-height: 1.5em; }
     .tagline { font-size: 1.2rem; color: #d4a843; }
     .card { border: 1px solid #2f2f36; border-radius: 1rem; padding: 1rem; margin: 1rem 0; background: #0d0d11; }
     .skip-link { position: absolute; left: .5rem; top: .5rem; background: #00d992; color: #04100c; padding: .5rem; }
@@ -72,6 +78,53 @@ HOME_HTML = """<!doctype html>
       <li><strong>Render.</strong> Call <code>render_final_mix</code> or <code>POST /api/projects/{project_id}/render</code>. REST rendering is queued and returns a job id; poll <code>GET /api/jobs/{job_id}</code>.</li>
       <li><strong>Download artifacts.</strong> When the job is done, fetch metadata or files from <code>/api/projects/{project_id}/artifact</code>, <code>/artifact.mp3</code>, <code>/artifact.wav</code>, or <code>/render-manifest.json</code>.</li>
     </ol>
+  </section>
+
+  <section class="card" aria-labelledby="copy-ready-examples">
+    <h2 id="copy-ready-examples">Copy-ready examples</h2>
+    <p>Each example is a real command or request shape. Replace placeholders such as <code>[API_KEY]</code> and <code>[PROJECT_ID]</code> before running.</p>
+
+    <div class="copy-snippet">
+      <div class="copy-snippet-header">
+        <span class="copy-snippet-title">Register an agent</span>
+        <button class="copy-button" type="button" data-copy-target="snippet-register" aria-describedby="copy-status">Copy</button>
+      </div>
+      <pre><code id="snippet-register">curl -X POST https://actvoice.xyz/api/agents/register \
+  -H 'Content-Type: application/json' \
+  -d '{"agent_name":"Hermes","purpose":"audio drama render"}'</code></pre>
+    </div>
+
+    <div class="copy-snippet">
+      <div class="copy-snippet-header">
+        <span class="copy-snippet-title">Create a project</span>
+        <button class="copy-button" type="button" data-copy-target="snippet-create-project" aria-describedby="copy-status">Copy</button>
+      </div>
+      <pre><code id="snippet-create-project">curl -X POST https://actvoice.xyz/api/projects \
+  -H 'Authorization: Bearer [API_KEY]' \
+  -H 'Content-Type: application/json' \
+  -d '{"title":"My audio drama","language":"ru"}'</code></pre>
+    </div>
+
+    <div class="copy-snippet">
+      <div class="copy-snippet-header">
+        <span class="copy-snippet-title">Render and download</span>
+        <button class="copy-button" type="button" data-copy-target="snippet-render-download" aria-describedby="copy-status">Copy</button>
+      </div>
+      <pre><code id="snippet-render-download">curl -X POST https://actvoice.xyz/api/projects/[PROJECT_ID]/render \
+  -H 'Authorization: Bearer [API_KEY]'
+
+curl https://actvoice.xyz/api/jobs/[JOB_ID]
+curl -L -o final_mix.mp3 https://actvoice.xyz/api/projects/[PROJECT_ID]/artifact.mp3</code></pre>
+    </div>
+
+    <div class="copy-snippet">
+      <div class="copy-snippet-header">
+        <span class="copy-snippet-title">Local MCP server</span>
+        <button class="copy-button" type="button" data-copy-target="snippet-mcp" aria-describedby="copy-status">Copy</button>
+      </div>
+      <pre><code id="snippet-mcp">ACTVOICE_API_KEY='[API_KEY]' python -m app.mcp_server</code></pre>
+    </div>
+    <p id="copy-status" class="copy-status" role="status" aria-live="polite"></p>
   </section>
 
   <section class="card" aria-labelledby="auth">
@@ -107,6 +160,38 @@ HOME_HTML = """<!doctype html>
     </ul>
   </section>
 </main>
+<script>
+  async function copySnippet(targetId, statusEl) {
+    const target = document.getElementById(targetId);
+    if (!target) return;
+    const text = target.innerText;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+      statusEl.textContent = 'Copied to clipboard.';
+    } catch (error) {
+      statusEl.textContent = 'Copy failed. Select the code block and copy it manually.';
+    }
+  }
+
+  document.querySelectorAll('[data-copy-target]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const statusEl = document.getElementById('copy-status');
+      copySnippet(button.dataset.copyTarget, statusEl);
+    });
+  });
+</script>
 </body>
 </html>
 """
