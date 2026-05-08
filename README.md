@@ -14,13 +14,13 @@ ActVoice is designed as a server-side audio drama studio:
 
 ## MVP Modes
 
-TTS provider modes planned:
+TTS provider modes:
 
-1. `rhvoice` — free/local/server-side, queued.
-2. `openai_byo_key` — future user-provided OpenAI key, fast/paid by user.
-3. `edge` — future experimental/fallback mode.
+1. `edge` — free/default neural Microsoft voices.
+2. `rhvoice` — local/offline fallback and explicit open-source mode.
+3. `openai_byo_key` — future user-provided OpenAI key, fast/paid by user.
 
-Current implementation includes `RHVoiceProvider`, SQLite-backed project/agent/job storage, in-process `RenderQueue`, Openverse CC0 SFX lookup, timing anchors, and downloadable artifact endpoints.
+Current implementation includes `EdgeTTSProvider`, `RHVoiceProvider`, an Edge→RHVoice fallback chain, SQLite-backed project/agent/job storage, in-process `RenderQueue`, Openverse CC0 SFX lookup, timing anchors, and downloadable artifact endpoints.
 
 ## Requirements
 
@@ -29,6 +29,8 @@ Ubuntu packages:
 ```bash
 apt-get install -y rhvoice rhvoice-russian rhvoice-english ffmpeg
 ```
+
+Python dependencies include `edge-tts`. If Edge is unavailable at runtime, ActVoice falls back to RHVoice.
 
 Python:
 
@@ -79,6 +81,30 @@ ACTVOICE_MCP_TRANSPORT=streamable-http python -m app.mcp_server
 ```
 
 For MVP, write tools still require an ActVoice key, either through `ACTVOICE_API_KEY` or an `api_key` tool argument.
+
+## TTS Provider Chain
+
+Default free mode is Edge first with RHVoice fallback:
+
+```text
+edge -> rhvoice
+```
+
+Useful runtime modes:
+
+```bash
+# Default quality-first free mode
+export ACTVOICE_TTS_MODE=free
+export ACTVOICE_TTS_DEFAULT=edge
+
+# Fully local/offline open-source mode
+export ACTVOICE_TTS_MODE=rhvoice
+
+# Optional RHVoice fallback voice when Edge fails
+export ACTVOICE_RHVOICE_FALLBACK_VOICE=aleksandr
+```
+
+Characters default to `provider=edge` and `voice=ru-RU-DmitryNeural`. Set `provider=rhvoice` and `voice=aleksandr` when a project must use local RHVoice only. The render manifest records the actual provider/voice for each line plus whether fallback was used.
 
 ## Agent Registration / Minimal Anti-Spam
 

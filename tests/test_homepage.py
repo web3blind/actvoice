@@ -25,5 +25,7 @@ def test_homepage_contains_accessible_agent_instructions():
     assert "after_line" in html
     assert "no AI runs inside the core service" in html
     assert "REST rendering is queued" in html
+    assert "edge" in html
+    assert "local/offline fallback" in html
     assert "artifact.mp3" in html
     assert "render-manifest.json" in html

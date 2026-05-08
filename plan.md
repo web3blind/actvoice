@@ -8,10 +8,11 @@ Build an open-source, accessible-first audio drama production service with:
 - REST API for humans/web UI;
 - MCP-compatible tool surface for AI agents;
 - server-side rendering of audio artifacts;
-- RHVoice free/basic TTS mode;
+- Edge/Microsoft neural voices as the default free TTS mode;
+- RHVoice local/offline fallback and explicit open-source mode;
 - Openverse CC0 SFX provider for real ambience/foley;
 - synthetic ambience/SFX fallback when no real asset is available;
-- future provider slots for OpenAI BYO key and Edge/Microsoft.
+- future provider slot for OpenAI BYO key.
 
 The service should not depend on a built-in LLM. External agents use MCP/API to create projects and render final MP3 files.
 
@@ -30,7 +31,8 @@ Initial stack:
 - Python 3
 - FastAPI
 - Pydantic
-- RHVoice via `RHVoice-test`
+- Edge TTS via `edge-tts` for default free neural voices
+- RHVoice via `RHVoice-test` as fallback/local mode
 - ffmpeg/ffprobe
 - SQLite-backed project/agent/render-job storage plus filesystem artifact storage for MVP
 - pytest for tests
@@ -45,9 +47,10 @@ Website / REST API / MCP tools
   -> SQLite storage (projects + agents + render jobs)
   -> Render queue/service
   -> TTS provider abstraction
+      -> FallbackTTSProvider (default free chain: Edge -> RHVoice)
+      -> EdgeTTSProvider
       -> RHVoiceProvider
       -> future OpenAITTSProvider
-      -> future EdgeTTSProvider
   -> SFX provider abstraction
       -> OpenverseSFXProvider (CC0 real sounds)
       -> Synthetic SFX/Ambience fallback
@@ -146,17 +149,20 @@ MCP tool functions call the same service layer as REST:
 ## TTS Providers
 
 MVP:
-- `RHVoiceProvider`
+- `EdgeTTSProvider` for the default free neural voice path.
+- `RHVoiceProvider` for local/offline rendering and fallback.
+- `FallbackTTSProvider` routes the free mode as `edge -> rhvoice`.
 
 Future:
-- `OpenAITTSProvider` with user-provided key
-- `EdgeTTSProvider` as experimental/fallback
+- `OpenAITTSProvider` with user-provided key.
 
 Provider abstraction:
 
 ```python
-synthesize(text, voice, output_path, *, rate=100, pitch=100, volume=100) -> AudioSegmentMetadata
+synthesize(text, voice, output_path, *, rate=100, pitch=100, volume=100, provider=None, fallback_voice=None) -> SynthesisResult
 ```
+
+The render manifest records `tts_provider`, `tts_voice`, requested provider/voice, and fallback reason per dialogue line.
 
 ## Sound Design Strategy
 
@@ -219,11 +225,12 @@ Unit tests:
 - project service creates/mutates projects;
 - sound cue generator creates WAV files;
 - render queue state transitions;
+- TTS fallback chain uses Edge first, falls back to RHVoice, and records manifest metadata.
 - RHVoice provider detects availability and can be skipped if missing.
 
 Integration smoke:
 - create tiny project;
-- render with RHVoice if installed;
+- render with Edge when available or RHVoice fallback if installed;
 - final MP3 exists and ffprobe duration is positive.
 
 ## Definition of Done for MVP Scaffold
@@ -232,6 +239,7 @@ Integration smoke:
 - Python package scaffold exists.
 - REST app starts.
 - Project CRUD service works.
+- Edge provider and Edge→RHVoice fallback chain implemented.
 - RHVoice provider implemented.
 - Synthetic SFX generator implemented for basic cues.
 - Render service can create a short MP3 from a manifest.

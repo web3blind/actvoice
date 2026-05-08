@@ -11,7 +11,7 @@ from app.models import Character, DialogueLine, Scene, SoundCue
 from app.render import RenderService
 from app.render_queue import RenderQueue
 from app.store import ProjectNotFound, ProjectStore
-from app.tts import RHVoiceProvider
+from app.tts import RHVoiceProvider, default_tts_provider
 
 
 def dump_model(model):
@@ -84,9 +84,9 @@ HOME_HTML = """<!doctype html>
   <section class="card" aria-labelledby="tts">
     <h2 id="tts">Voice and rendering modes</h2>
     <ul>
-      <li><code>rhvoice</code>: current free local/server-side mode.</li>
+      <li><code>edge</code>: current free/default neural voice mode.</li>
+      <li><code>rhvoice</code>: local/offline fallback if Edge is unavailable or explicitly requested.</li>
       <li><code>openai_byo_key</code>: planned user-provided paid provider mode.</li>
-      <li><code>edge</code>: planned experimental fallback mode.</li>
     </ul>
   </section>
 
@@ -132,13 +132,14 @@ def register_agent(request: AgentRegistrationRequest) -> dict:
 
 @app.get("/health")
 def health() -> dict:
-    tts = RHVoiceProvider()
-    return {"ok": True, "service": "actvoice", "rhvoice": tts.is_available()}
+    rhvoice = RHVoiceProvider()
+    tts = default_tts_provider()
+    return {"ok": True, "service": "actvoice", "tts": tts.is_available(), "rhvoice": rhvoice.is_available()}
 
 
 @app.get("/api/voices")
 def list_voices() -> list[dict]:
-    return [voice.__dict__ for voice in RHVoiceProvider().list_voices()]
+    return [voice.__dict__ for voice in default_tts_provider().list_voices()]
 
 
 @app.post("/api/projects", dependencies=[Depends(require_agent_key)])

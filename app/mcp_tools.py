@@ -6,7 +6,7 @@ from typing import Any, Dict, Optional
 from app.models import Character, DialogueLine, Scene, SoundCue
 from app.render import RenderService
 from app.store import ProjectStore
-from app.tts import RHVoiceProvider
+from app.tts import default_tts_provider
 
 
 class ActVoiceTools:
@@ -24,15 +24,15 @@ class ActVoiceTools:
         return _dump(self.store.create_project(title=title, language=language))
 
     def list_voices(self) -> list[dict[str, Any]]:
-        return [voice.__dict__ for voice in RHVoiceProvider().list_voices()]
+        return [voice.__dict__ for voice in default_tts_provider().list_voices()]
 
     def add_character(
         self,
         project_id: str,
         name: str,
-        voice: str = "aleksandr",
+        voice: str = "ru-RU-DmitryNeural",
         gender_hint: str | None = None,
-        provider: str = "rhvoice",
+        provider: str = "edge",
     ) -> Dict[str, Any]:
         character = Character(name=name, voice=voice, gender_hint=gender_hint, provider=provider)
         return _dump(self.store.add_character(project_id, character))

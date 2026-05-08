@@ -24,8 +24,8 @@ class Character(BaseModel):
     id: str = Field(default_factory=lambda: uuid4().hex[:12])
     name: str
     gender_hint: Optional[str] = None
-    provider: TTSProviderName = TTSProviderName.rhvoice
-    voice: str = "aleksandr"
+    provider: TTSProviderName = TTSProviderName.edge
+    voice: str = "ru-RU-DmitryNeural"
 
     @field_validator("name", "voice")
     @classmethod

@@ -10,13 +10,13 @@ from app.models import Artifact, Project, RenderJob, RenderStatus
 from app.sfx import silence, synth_sound
 from app.sfx_provider import DEFAULT_OPENVERSE_QUERIES, OpenverseSFXProvider
 from app.store import ProjectStore
-from app.tts import RHVoiceProvider
+from app.tts import RHVOICE_DEFAULT_EN_VOICE, RHVOICE_DEFAULT_RU_VOICE, default_tts_provider
 
 
 class RenderService:
-    def __init__(self, store: ProjectStore, tts_provider: RHVoiceProvider | None = None, sfx_provider: OpenverseSFXProvider | None = None):
+    def __init__(self, store: ProjectStore, tts_provider=None, sfx_provider: OpenverseSFXProvider | None = None):
         self.store = store
-        self.tts_provider = tts_provider or RHVoiceProvider()
+        self.tts_provider = tts_provider or default_tts_provider()
         self.sfx_provider = sfx_provider
         self.jobs: Dict[str, RenderJob] = {}
 
@@ -63,9 +63,11 @@ class RenderService:
                 if character is None:
                     raise ValueError(f"unknown speaker_id: {line.speaker_id}")
                 wav = lines_dir / f"{scene.id}_{line_index:03d}_{line.id}.wav"
-                self.tts_provider.synthesize(
+                synthesis = self._synthesize_line(
                     text=line.text,
                     voice=character.voice,
+                    provider=character.provider.value if hasattr(character.provider, "value") else str(character.provider),
+                    project_language=project.language,
                     output_path=wav,
                     rate=line.rate,
                     pitch=line.pitch,
@@ -80,6 +82,12 @@ class RenderService:
                         "duration_ms": speech_duration_ms,
                         "pause_after_ms": line.pause_after_ms,
                         "end_ms": cursor_ms + speech_duration_ms,
+                        "tts_provider": synthesis.get("provider"),
+                        "tts_voice": synthesis.get("voice"),
+                        "tts_requested_provider": synthesis.get("requested_provider"),
+                        "tts_requested_voice": character.voice,
+                        "tts_fallback_used": synthesis.get("fallback_used", False),
+                        "tts_fallback_reason": synthesis.get("fallback_reason"),
                     }
                 )
                 scene_parts.append(wav)
@@ -184,6 +192,50 @@ class RenderService:
             wav_url=f"/api/projects/{project.id}/artifact.wav",
             render_manifest_url=f"/api/projects/{project.id}/render-manifest.json",
         )
+
+    def _synthesize_line(
+        self,
+        *,
+        text: str,
+        voice: str,
+        provider: str,
+        project_language: str,
+        output_path: Path,
+        rate: int,
+        pitch: int,
+        volume: int,
+    ) -> dict:
+        fallback_voice = RHVOICE_DEFAULT_RU_VOICE if project_language.lower().startswith("ru") else RHVOICE_DEFAULT_EN_VOICE
+        try:
+            result = self.tts_provider.synthesize(
+                text=text,
+                voice=voice,
+                output_path=output_path,
+                rate=rate,
+                pitch=pitch,
+                volume=volume,
+                provider=provider,
+                fallback_voice=fallback_voice,
+            )
+        except TypeError as exc:
+            # Test doubles and older custom providers may not accept provider/fallback_voice.
+            if "provider" not in str(exc) and "fallback_voice" not in str(exc):
+                raise
+            result = self.tts_provider.synthesize(
+                text=text,
+                voice=voice,
+                output_path=output_path,
+                rate=rate,
+                pitch=pitch,
+                volume=volume,
+            )
+        return {
+            "provider": getattr(result, "provider", provider),
+            "voice": getattr(result, "voice", voice),
+            "requested_provider": provider,
+            "fallback_used": bool(getattr(result, "fallback_used", False)),
+            "fallback_reason": getattr(result, "fallback_reason", None),
+        }
 
     def _resolve_cue_start_ms(self, cue, scene_duration_ms: int, line_timings: list[dict]) -> int:
         if cue.anchor is None:

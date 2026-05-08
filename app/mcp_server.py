@@ -80,9 +80,9 @@ def create_mcp_server(store: Optional[ProjectStore] = None, auth_store: Optional
     def add_character(
         project_id: str,
         name: str,
-        voice: str = "aleksandr",
+        voice: str = "ru-RU-DmitryNeural",
         gender_hint: str | None = None,
-        provider: str = "rhvoice",
+        provider: str = "edge",
         api_key: str | None = None,
     ) -> dict[str, Any]:
         """Add a character and voice assignment to a project. Requires API key."""
